@@ -1,3 +1,4 @@
+import pydantic
 from sqlalchemy import Column, DateTime, Integer, String, create_engine, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -18,3 +19,27 @@ class Advert(Base):
 
 
 Base.metadata.create_all(engine)
+
+
+class CreateAdvert(pydantic.BaseModel):
+    title: str
+    description: str
+    owner: str
+
+    @pydantic.validator("title")
+    def is_ascii_title(cls, value: str):
+        if not value.isascii():
+            raise ValueError('incorrect title')
+        return value
+
+    @pydantic.validator("description")
+    def is_ascii_description(cls, value: str):
+        if not value.isascii():
+            raise ValueError('incorrect description')
+        return value
+
+    @pydantic.validator("owner")
+    def is_ascii_owner(cls, value: str):
+        if not value.isascii():
+            raise ValueError('incorrect owner name')
+        return value
