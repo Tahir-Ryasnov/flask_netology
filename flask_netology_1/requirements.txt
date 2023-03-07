@@ -1,0 +1,6 @@
+flask
+requests
+sqlalchemy==1.4.46
+psycopg2-binary
+pydantic
+python-dotenv
