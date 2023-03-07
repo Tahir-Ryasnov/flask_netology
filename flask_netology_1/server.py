@@ -1,7 +1,7 @@
 import pydantic
 from flask import Flask, jsonify, request
 from flask.views import MethodView
-from models import Session, Advert, CreateAdvert
+from models import Session, Advert
 
 app = Flask('app')
 
@@ -23,6 +23,31 @@ def get_advert(advert_id: int, session: Session):
     if advert is None:
         raise HttpError(404, 'advert not found')
     return advert
+
+
+class CreateAdvert(pydantic.BaseModel):
+    title: str
+    description: str
+    owner: str
+
+    @pydantic.validator("title")
+    def is_ascii_title(cls, value: str):
+        if not value.isascii():
+            raise ValueError('incorrect title')
+        return value
+
+    @pydantic.validator("description")
+    def is_ascii_description(cls, value: str):
+        if not value.isascii():
+            raise ValueError('incorrect description')
+        return value
+
+    @pydantic.validator("owner")
+    def is_ascii_owner(cls, value: str):
+        if not value.isascii():
+            raise ValueError('incorrect owner name')
+        return value
+
 
 def validate(unvalidated_data: dict, validation_model):
     try:
